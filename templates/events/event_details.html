@@ -1,0 +1,66 @@
+{% load templatetools events_tags %}
+{% if event %}
+    <h2> {{event.name}} {% if event.registration_has_started %}({{ event.get_formatted_number_of_attendees }}){% endif %}</h2>
+    <h3> {{event.type }}</h3>
+    <dl>
+        <dt>Hefst:</dt>
+        <dd>{{ event.starts|format_datetime }}</dd>
+        <dt>Lýkur:</dt>
+        <dd>{{ event.ends|format_datetime }}</dd>
+        <dt>Staðsetning:</dt>
+        <dd> {{ event.location }}</dd>
+        {% if event.has_arrive_information %}
+        <dt>Mæting:</dt>
+        <dd>{{ event.arrive_where }}, klukkan: {{ event.arrive_when|date:"H:i" }}</dd>
+        {% endif %}
+    </dl>
+    {% if event.info %}
+    <div class="event-info">
+    <h3>Nánari upplýsingar:</h3>
+    {% autoescape off %}
+    {{ event.info_html }}
+    {% endautoescape %}
+    </div>
+    {% endif %}
+
+    {% if event.has_passed %}
+    <p class="info">Atburðurinn er liðinn</p>
+    {% else %}
+        {% if event.registration_has_started %}
+            {% if user.is_authenticated %}
+                {% if user_is_attending %}
+                {% render_unregistration_form request.user event %}
+                {% else %}
+                {% render_registration_form request.user event %}
+                {% endif %}
+            {% else %}
+            <p class="info">Aðeins innskráðir notendur geta skráð sig.</p>
+            {% endif %}
+        {% else %}
+        <p class="info">Skráning er ekki hafin.</p>
+        {% endif %}
+    {% endif %}
+
+    {% if event.registration_has_started %}
+
+        <h3>Hverjir {% if event.has_passed %}voru{% else %}eru{% endif %} skráðir á þennan atburð:</h3>
+        {% if event.has_attending_users %}
+        <ul class="registered-users">
+            {% for user in event.get_attending_users %}
+            {% include 'events/snippets/registration_item.html' %}
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="info">Enginn er skráður á atburðinn!</p>
+        {% endif %}
+
+        {% if event.is_full and event.has_waiting_list %}
+        <h3>Biðlistinn:</h3>
+        <ul class="registered-users" >
+            {% for user in event.get_waiting_list %}
+            {% include 'events/snippets/registration_item.html' %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endif %}
+{% endif %}

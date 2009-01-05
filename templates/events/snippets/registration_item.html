@@ -1,0 +1,8 @@
+<li>
+    <span class="number">{{ forloop.counter }}</span>
+    {% with user.get_profile as profile %}
+    <a href="{{ profile.get_absolute_url }}">
+        <img title="{{ profile.get_short_fullname }}" src="{{ profile.profile.medium}}" alt="{{ profile.get_short_fullname }}" />
+    </a>
+    {% endwith %}
+</li>

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n pagination_tags templatetools %}
+
+{% block title %}{% trans 'Atburðir' %} &#124; {{ block.super }}{% endblock %}
+
+{% block alt_content %}
+<h1>{% trans 'Atburðir' %}</h1>
+{% get_list_of_objects events Event as list_of_events %}
+{% if list_of_events %}
+{% autopaginate list_of_events %}
+{% paginate %}
+<ul>
+{% for event in list_of_events %}
+    <li>
+        {% ifequal request.path event.get_absolute_url %}
+        <span class="selected">{{ event.name }}</span>
+        {% else %}
+        <a href="{{ event.get_absolute_url }}">{{ event.name|truncatewords:"10" }}</a>
+        {% endifequal %}
+    </li>
+{% endfor %}
+</ul>
+{% paginate %}
+{% else %}
+<p class="info">{% trans 'Engar atburðir hafa verið skráðir.' %}</p>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="event">
+{% if event %}
+{% include 'events/event_details.html' %}
+{% else %}
+<p class="info">Engir atburðir eru í komandi framtíð.</p>
+{% endif %}
+</div>
+{% endblock %}
