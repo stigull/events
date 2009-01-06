@@ -1,0 +1,16 @@
+{% load events_tags templatetools %}
+{% if event.registration_has_started %}
+    {% check_if_user_can_attend request.user as user_can_attend %}
+    {% check_if_user_is_attending request.user event as user_is_attending %}
+    {% if user_can_attend %}
+        {% if user_is_attending %}
+        {% render_unregistration_form request.user event %}
+        {% else %}
+        {% render_registration_form request.user event %}
+        {% endif %}
+    {% else %}
+    <p class="info registration">Aðeins innskráðir notendur geta skráð sig.</p>
+    {% endif %}
+{% else %}
+<p class="info">Skráning hefst {{ event.registration_starts|format_datetime|lower }}.</p>
+{% endif %}

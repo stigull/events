@@ -1,0 +1,11 @@
+{% load events_tags %}
+<h2>Nýjustu atburðir</h2>
+{% if latest_events %}
+<ul>
+{% for event in latest_events %}
+    <li>{{ event }} {% include 'events/event_registration.html' %}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p class="info">Engir atburðir í komandi framtíð.</p>
+{% endif %}
