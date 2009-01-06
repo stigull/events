@@ -11,7 +11,7 @@
 {% paginate %}
 <ul>
 {% for event in list_of_events %}
-    <li>
+    <li {% if event.has_passed %}class="has-passed"{% endif %}>
         {% ifequal request.path event.get_absolute_url %}
         <span class="selected">{{ event.name }}</span>
         {% else %}

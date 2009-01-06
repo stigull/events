@@ -9,11 +9,28 @@ from django.core.urlresolvers import reverse
 
 from utils.stringformatting import slugify
 
-
-#from stigull.standard.functions import getReadableDateTime
-#from stigull.settings import MONTHS, getDayOfWeek
-
 REGISTRATION_LIMIT_CHOICES = [(0, u"Engin takmörk")] + zip(range(1,100), range(1,100))
+
+class ValidatorRegistry(object):
+
+    def __init__(self):
+        self.validator = RegistrationValidator()
+
+    def add_validator(self, validator):
+        assert issubclass(validator.__class__, RegistrationValidator)
+        self.validator = validator
+
+    def get_validator(self):
+        return self.validator
+
+
+class RegistrationValidator(object):
+    def can_attend(self, user):
+        return user.is_authenticated()
+
+
+validator_registry = ValidatorRegistry()
+
 
 class EventType(models.Model):
     typename = models.CharField('Tag', max_length = 40)
@@ -50,7 +67,7 @@ class Event(models.Model):
     ends = models.DateTimeField('Lýkur')
 
     info = models.TextField('Upplýsingar', blank = True, null = True)
-    info_html =models.TextField(editable = False, blank = True, null = True)
+    info_html = models.TextField(editable = False, blank = True, null = True)
 
     arrive_when = models.DateTimeField('Mæting hvenær', null = True, blank = True)
     arrive_where = models.CharField('Mæting hvert', null = True, max_length = 150, blank = True)
@@ -77,26 +94,31 @@ class Event(models.Model):
         return ('event_details', (), { 'event_id': self.id, 'event_slug': self.slug })
     get_absolute_url = models.permalink(get_absolute_url)
 
+    def has_passed(self, now = None):
+        if now is None:
+            now = datetime.now()
+        return now > self.ends
+
+    def registration_has_started(self, now = None):
+        if now is None:
+            now = datetime.now()
+        return self.registration_starts <= now
+
+    def has_registration_limit(self):
+        return self.registration_limit > 0
+
     def get_registrations(self):
         return EventRegistration.objects.filter(event = self)
-
-    def has_passed(self):
-        return datetime.now() >= self.ends
-
-    def get_has_passed_css_class(self):
-        if self.has_passed():
-            return "has-passed"
-        else:
-            return ""
-
-    def registration_has_started(self):
-        return self.registration_starts <= datetime.now()
 
     def has_attending_users(self):
         return self.get_registrations().count() > 0
 
-    def has_registration_limit(self):
-        return self.registration_limit > 0
+    def add_user_to_list_of_attendees(self, user):
+        registration = EventRegistration.objects.create(user = user, event = self)
+
+    def remove_user_from_list_of_attendees(self, user):
+        registration = EventRegistration.objects.get(user = user, event = self)
+        registration.delete()
 
     def is_full(self):
         if self.registration_limit == 0:
@@ -104,25 +126,15 @@ class Event(models.Model):
         else:
             return self.get_registrations().count() >= self.registration_limit
 
-    def add_user_to_list_of_attendees(self, user):
-        registration = EventRegistration(user = user, event = self)
-        registration.save()
-
-    def remove_user_from_list_of_attendees(self, user):
-        registration = EventRegistration.objects.get(user = user, event = self)
-        registration.delete()
-
     def user_is_attending(self, user):
-        if user.is_authenticated():
-            return self.get_registrations().filter(user = user).count() == 1
-        else:
-            return False
+        return self.get_registrations().filter(user = user).count() == 1
 
     def get_number_of_attendees(self):
         nr_of_attendees = self.get_registrations().count()
         if not self.has_registration_limit() or nr_of_attendees <= self.registration_limit:
             return nr_of_attendees
         else:
+            #The event has a registration limit and then number of attendes is greater than the limit
             return self.registration_limit
 
     def get_formatted_number_of_attendees(self):
@@ -130,7 +142,6 @@ class Event(models.Model):
             return "%d/%d" % (self.get_number_of_attendees(), self.registration_limit)
         else:
             return self.get_number_of_attendees()
-
 
     def get_attending_users(self):
         attending_users = [registration.user for registration in self.get_registrations()]

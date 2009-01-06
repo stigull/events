@@ -23,10 +23,6 @@ def show_events(request, event_id = None, event_slug = None, page = 1):
         except IndexError:
             context['event'] = None
 
-    if request.user.is_authenticated():
-        if context['event'] is not None:
-            context['user_is_attending'] = context['event'].user_is_attending(request.user)
-
     return render_to_response('events/events_base.html', context, context_instance = RequestContext(request))
 
 def process_registration(request, Form):
