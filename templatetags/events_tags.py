@@ -78,7 +78,7 @@ class IsAttendingNode(template.Node):
         return ''
 
 def get_latest_events(context):
-    latest_events = Event.objects.filter(starts__gte = datetime.now())
+    latest_events = Event.objects.filter(ends__lte = datetime.now())
     if latest_events.count() > 3:
         latest_events = latest_events[:3]
     context['latest_events'] = latest_events
