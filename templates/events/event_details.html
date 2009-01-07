@@ -1,7 +1,7 @@
 {% load templatetools events_tags %}
 {% if event %}
     <h1>{{event.name}} {% if event.registration_has_started %}({{ event.get_formatted_number_of_attendees }}){% endif %}</h1>
-    <h2>{{event.type }}</h2>
+    <h2 class="event-type">{{event.event_type }}</h2>
     <dl>
         <dt>Hefst:</dt>
         <dd>{{ event.starts|format_datetime }}</dd>
@@ -30,7 +30,7 @@
     {% endif %}
 
     {% if event.registration_has_started %}
-        <h3>Hverjir {% if event.has_passed %}voru{% else %}eru{% endif %} skráðir á þennan atburð:</h3>
+        <h2>Hverjir {% if event.has_passed %}voru{% else %}eru{% endif %} skráðir á þennan atburð:</h2>
         {% if event.has_attending_users %}
         <ul class="registered-users">
             {% for user in event.get_attending_users %}

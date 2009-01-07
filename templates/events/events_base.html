@@ -1,7 +1,9 @@
 {% extends "base.html" %}
-{% load i18n pagination_tags templatetools %}
+{% load i18n pagination_tags templatetools compressed %}
 
 {% block title %}{% trans 'Atburðir' %} &#124; {{ block.super }}{% endblock %}
+
+{% block css %}{% compressed_css 'events' %}{% endblock %}
 
 {% block alt_content %}
 <h1>{% trans 'Atburðir' %}</h1>
