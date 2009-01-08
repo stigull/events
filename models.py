@@ -99,6 +99,11 @@ class Event(models.Model):
             now = datetime.now()
         return now > self.ends
 
+    def has_started(self, now = None):
+        if now is None:
+            now = datetime.now()
+        return self.starts <= now
+
     def registration_has_started(self, now = None):
         if now is None:
             now = datetime.now()

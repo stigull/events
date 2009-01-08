@@ -3,6 +3,7 @@ import django.forms as forms
 from django.contrib.auth.models import User
 
 from events.models import Event, EventRegistration
+from utils.djangoutils import ModelField
 
 class EventForm(forms.ModelForm):
     def clean(self):
@@ -23,18 +24,6 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-
-class ModelField(forms.Field):
-
-    def __init__(self, model, required = True, label =None , initial = None, widget = forms.HiddenInput, help_text = None):
-        super(ModelField, self).__init__(required = required, label = label,
-                                            initial = initial, widget = widget, help_text = help_text)
-        self.model = model
-
-    def clean(self, instance_id):
-        return self.model.objects.get(pk = instance_id)
-
-
 
 
 class EventRegistrationForm(forms.Form):

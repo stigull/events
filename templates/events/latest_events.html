@@ -1,9 +1,17 @@
 {% load events_tags %}
-<h2>Nýjustu atburðir</h2>
+<h2>Næstu atburðir</h2>
 {% if latest_events %}
 <ul>
 {% for event in latest_events %}
-    <li>{{ event }} {% include 'events/event_registration.html' %}</li>
+    <li>
+        <dl>
+            <dt>{{ event.event_type }}:</dt>
+            <dd><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></dd>
+            <dt>{% if event.has_started %}Hófst{% else %}Hefst{% endif %}:</dt>
+            <dd>Kl. {{ event.starts|date:"H:i þ\a\n\n d.m.Y" }}</dd>
+        </dl>
+        {% include 'events/event_registration.html' %}
+    </li>
 {% endfor %}
 </ul>
 {% else %}
