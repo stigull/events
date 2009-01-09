@@ -1,7 +1,7 @@
 {% load events_tags %}
-<h2>Næstu atburðir</h2>
+<h1>Næstu atburðir</h1>
 {% if latest_events %}
-<ul>
+<ul id="latest-events">
 {% for event in latest_events %}
     <li>
         <dl>

@@ -12,5 +12,5 @@
     <p class="info registration">Aðeins innskráðir notendur geta skráð sig.</p>
     {% endif %}
 {% else %}
-<p class="info">Skráning hefst {{ event.registration_starts|format_datetime|lower }}.</p>
+<p class="info registration-starts">Skráning hefst {{ event.registration_starts|format_datetime|lower }}.</p>
 {% endif %}
