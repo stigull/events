@@ -20,7 +20,7 @@ def render_form(Form, urlname, label, name):
 render_registration_form = render_form(EventRegistrationForm, 'event_attend', u'Skrá á atburð', "render_registration_form")
 register.inclusion_tag('events/forms/generic_form.html')(render_registration_form)
 
-render_unregistration_form = render_form(EventUnregistrationForm, 'event_unattend', u'Afskrá af atburði', "render_unregistration_form")
+render_unregistration_form = render_form(EventUnregistrationForm, 'event_unattend', u'Skrá af atburði', "render_unregistration_form")
 register.inclusion_tag('events/forms/generic_form.html')(render_unregistration_form)
 
 def check_if_user_can_attend(parser, token):
@@ -78,7 +78,7 @@ class IsAttendingNode(template.Node):
         return ''
 
 def get_latest_events(context):
-    latest_events = Event.objects.filter(ends__gte = datetime.now())
+    latest_events = Event.objects.filter(ends__gte = datetime.now()).order_by('starts')
     if latest_events.count() > 3:
         latest_events = latest_events[:3]
     context['latest_events'] = latest_events

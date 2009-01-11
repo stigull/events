@@ -6,7 +6,7 @@
     <li>
         <dl>
             <dt>{{ event.event_type }}:</dt>
-            <dd><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></dd>
+            <dd><a href="{{ event.get_absolute_url }}">{{ event.name }} {% if event.registration_has_started %}({{ event.get_formatted_number_of_attendees }}){% endif %}</a></dd>
             <dt>{% if event.has_started %}Hófst{% else %}Hefst{% endif %}:</dt>
             <dd>Kl. {{ event.starts|date:"H:i þ\a\n\n d.m.Y" }}</dd>
         </dl>
