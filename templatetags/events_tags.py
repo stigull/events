@@ -79,8 +79,8 @@ class IsAttendingNode(template.Node):
 
 def get_latest_events(context):
     latest_events = Event.objects.filter(ends__gte = datetime.now()).order_by('starts')
-    if latest_events.count() > 3:
-        latest_events = latest_events[:3]
+    if latest_events.count() > 5:
+        latest_events = latest_events[:5]
     context['latest_events'] = latest_events
     return context
 get_latest_events = register.inclusion_tag('events/latest_events.html', takes_context = True)(get_latest_events)

@@ -3,7 +3,8 @@
     {% with user.get_profile as profile %}
     <a href="{{ profile.get_absolute_url }}">
         <img title="{{ profile.get_short_fullname }}" src="{{ profile.display_image.medium.url }}" alt="{{ profile.get_short_fullname }}" />
-    </a>
-    <span class="reguser">{{ profile.get_fullname }}</span>
+	</a>
+	<br />
+    <span class="reguser">{{ profile.get_short_fullname }}</span>
     {% endwith %}
 </li>
